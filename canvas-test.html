@@ -1,0 +1,75 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Grid Madness</title>
+  <meta name="description" content="Grid Madness">
+  <meta name="author" content="Steven">
+
+  <style>
+    .canvas-container {
+      
+    }
+    #canvas-grid {
+      
+    }
+  </style>
+
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <h1>Grid Madness!</h1>
+  <p>Can our robot find the way through?</p>
+  <div class="canvas-container">
+    <canvas id="canvas-grid" width="610" height="610"></canvas>
+  </div>
+
+  <script>
+    const gridSize = 600;
+    const stepCount = 10;
+    const stepSize = gridSize / stepCount;
+    const offSet = 5;
+    let canvas = document.getElementById("canvas-grid");
+    let ctx = canvas.getContext("2d");
+
+    drawGrid(ctx, gridSize, stepSize, offSet);
+    drawStart(ctx, offSet, stepSize);
+    drawEnd(ctx, offSet, gridSize, stepSize);
+
+    function drawGrid(ctx, gridSize, stepSize, offSet) {
+      const start = offSet;
+      const end = gridSize + offSet;
+
+      // Draw Horizontal lines
+      for(let y = start; y <=end; y += stepSize) {
+        ctx.moveTo(start,y);
+        ctx.lineTo(end,y);
+        ctx.stroke();
+      }
+
+      // Draw Vertical lines
+      for(let x = start; x <=end; x += stepSize) {
+        ctx.moveTo(x,start);
+        ctx.lineTo(x,end);
+        ctx.stroke();
+      }
+    };
+
+    function drawStart(ctx, offSet, stepSize) {
+      ctx.fillStyle = 'rgba(0, 97, 255, .5)';
+      ctx.fillRect(offSet+1, offSet+1, stepSize-2, stepSize-2);
+    };
+
+    function drawEnd(ctx, offSet, gridSize, stepSize) {
+      ctx.fillStyle = 'rgba(255, 0, 0, .5)';
+      ctx.fillRect(gridSize+offSet+1-stepSize, gridSize+offSet+1-stepSize, stepSize-2, stepSize-2);
+    };
+
+  </script>
+</body>
+</html>
