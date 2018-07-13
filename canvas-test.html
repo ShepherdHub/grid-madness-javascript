@@ -9,12 +9,6 @@
   <meta name="author" content="Steven">
 
   <style>
-    .canvas-container {
-      
-    }
-    #canvas-grid {
-      
-    }
   </style>
 
   <!--[if lt IE 9]>
@@ -30,45 +24,95 @@
   </div>
 
   <script>
-    const gridSize = 600;
-    const stepCount = 10;
-    const stepSize = gridSize / stepCount;
-    const offSet = 5;
+    // TODO: Implement Draw Obstacles
+    // TODO: Implement Draw Path
+    const gridLength = 600;
+    const gridSize = 10;
+    const stepLength = gridLength / gridSize;
+    const gridOffset = 5; // The grid is 5 pixels off from the actual 0,0 point of the canvas
     let canvas = document.getElementById("canvas-grid");
     let ctx = canvas.getContext("2d");
+    let obstacles = [];
+    const startCoord = { x: 0, y:0 };
+    const endCoord = { x: 9, y:9 };
 
-    drawGrid(ctx, gridSize, stepSize, offSet);
-    drawStart(ctx, offSet, stepSize);
-    drawEnd(ctx, offSet, gridSize, stepSize);
+    function init() {
+      window.requestAnimationFrame(draw);
+    }
 
-    function drawGrid(ctx, gridSize, stepSize, offSet) {
-      const start = offSet;
-      const end = gridSize + offSet;
+    function draw() {
+      ctx.clearRect(0,0,610,610);
+      drawGridLines();
+      drawStart();
+      drawEnd();
+      //drawObstacles();
+    }
+
+    function drawGridLines() {
+      const start = gridOffset;
+      const end = gridLength + gridOffset;
 
       // Draw Horizontal lines
-      for(let y = start; y <=end; y += stepSize) {
+      for(let y = start; y <=end; y += stepLength) {
         ctx.moveTo(start,y);
         ctx.lineTo(end,y);
         ctx.stroke();
       }
 
       // Draw Vertical lines
-      for(let x = start; x <=end; x += stepSize) {
+      for(let x = start; x <=end; x += stepLength) {
         ctx.moveTo(x,start);
         ctx.lineTo(x,end);
         ctx.stroke();
       }
     };
 
-    function drawStart(ctx, offSet, stepSize) {
+    function drawStart() {
       ctx.fillStyle = 'rgba(0, 97, 255, .5)';
-      ctx.fillRect(offSet+1, offSet+1, stepSize-2, stepSize-2);
+      ctx.fillRect(gridOffset+1, gridOffset+1, stepLength-2, stepLength-2);
     };
 
-    function drawEnd(ctx, offSet, gridSize, stepSize) {
+    function drawEnd() {
       ctx.fillStyle = 'rgba(255, 0, 0, .5)';
-      ctx.fillRect(gridSize+offSet+1-stepSize, gridSize+offSet+1-stepSize, stepSize-2, stepSize-2);
+      ctx.fillRect(gridLength+gridOffset+1-stepLength, gridLength+gridOffset+1-stepLength, stepLength-2, stepLength-2);
     };
+
+    // function drawObstacles() {
+    // };
+
+    function convertToGridElement(xPos, yPos) {
+      const x = Math.floor(xPos/stepLength);
+      const y = Math.floor(yPos/stepLength);
+      return { x: x, y: y };
+    };
+
+    function togglePoint(point) {
+      if(areEqualPoints(startCoord, point) || areEqualPoints(endCoord, point)) {
+        return;
+      }
+      const index = obstacles.findIndex(obstacle => {
+        return areEqualPoints(obstacle, point);
+      });
+
+      if(index === -1) {
+        obstacles.push(point);
+      } else {
+        obstacles.splice(index, 1);
+      }
+    };
+
+    function areEqualPoints(pointA, pointB) {
+      return pointA.x === pointB.x && pointA.y === pointB.y;
+    }
+
+    // Event Listeners
+    canvas.addEventListener('click', function(e) {
+      const coordinate = convertToGridElement(e.offsetX - gridOffset, e.offsetY - gridOffset);
+      togglePoint(coordinate);
+      window.requestAnimationFrame(draw);
+    });
+
+    init();
 
   </script>
 </body>
