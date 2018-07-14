@@ -9,6 +9,10 @@
   <meta name="author" content="Steven">
 
   <style>
+    .canvas-container{
+      display: flex;
+      justify-content: center;
+    }
   </style>
 
   <!--[if lt IE 9]>
@@ -22,9 +26,7 @@
   <div class="canvas-container">
     <canvas id="canvas-grid" width="610" height="610"></canvas>
   </div>
-
   <script>
-    // TODO: Implement Draw Obstacles
     // TODO: Implement Draw Path
     const gridLength = 600;
     const gridSize = 10;
@@ -36,6 +38,7 @@
     const startCoord = { x: 0, y:0 };
     const endCoord = { x: 9, y:9 };
 
+
     function init() {
       window.requestAnimationFrame(draw);
     }
@@ -45,7 +48,7 @@
       drawGridLines();
       drawStart();
       drawEnd();
-      //drawObstacles();
+      drawObstacles();
     }
 
     function drawGridLines() {
@@ -77,8 +80,14 @@
       ctx.fillRect(gridLength+gridOffset+1-stepLength, gridLength+gridOffset+1-stepLength, stepLength-2, stepLength-2);
     };
 
-    // function drawObstacles() {
-    // };
+    function drawObstacles() {
+      ctx.fillStyle = 'darkgray';
+      obstacles.forEach(obstacle => {
+        const startCornerX = obstacle.x * stepLength + gridOffset + 1;
+        const startCornerY = obstacle.y * stepLength + gridOffset + 1;
+        ctx.fillRect(startCornerX, startCornerY, stepLength - 2, stepLength - 2); 
+      });
+    };
 
     function convertToGridElement(xPos, yPos) {
       const x = Math.floor(xPos/stepLength);
