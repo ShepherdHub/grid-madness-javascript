@@ -26,8 +26,16 @@
   <div class="canvas-container">
     <canvas id="canvas-grid" width="610" height="610"></canvas>
   </div>
+  <div>
+    <p>Find the shortest path:</p>
+    <button id="search-button">
+      Search
+    </button>
+  </div> 
   <script>
-    // TODO: Implement Draw Path
+    // TODO: Create a more efficient system for adding/removing obstacles
+    // Try only drawing/erasing the obstacle that is being added/removed
+    // TODO: Standardize language around grid coordinates and pixel position
     const gridLength = 600;
     const gridSize = 10;
     const stepLength = gridLength / gridSize;
@@ -37,11 +45,22 @@
     let obstacles = [];
     const startCoord = { x: 0, y:0 };
     const endCoord = { x: 9, y:9 };
-
+    const pathPoints = [
+      {x: 0, y: 0},
+      {x: 1, y: 1},
+      {x: 2, y: 2},
+      {x: 3, y: 3},
+      {x: 4, y: 4},
+      {x: 5, y: 5},
+      {x: 6, y: 6},
+      {x: 7, y: 7},
+      {x: 8, y: 8},
+      {x: 9, y: 9}
+    ];
 
     function init() {
       window.requestAnimationFrame(draw);
-    }
+    };
 
     function draw() {
       ctx.clearRect(0,0,610,610);
@@ -49,14 +68,16 @@
       drawStart();
       drawEnd();
       drawObstacles();
-    }
+    };
 
     function drawGridLines() {
       const start = gridOffset;
       const end = gridLength + gridOffset;
+      ctx.strokeStyle = 'black';
 
       // Draw Horizontal lines
       for(let y = start; y <=end; y += stepLength) {
+        ctx.beginPath();
         ctx.moveTo(start,y);
         ctx.lineTo(end,y);
         ctx.stroke();
@@ -64,6 +85,7 @@
 
       // Draw Vertical lines
       for(let x = start; x <=end; x += stepLength) {
+        ctx.beginPath();
         ctx.moveTo(x,start);
         ctx.lineTo(x,end);
         ctx.stroke();
@@ -89,11 +111,29 @@
       });
     };
 
+    // TODO: Use pathPoints to draw line
+    function drawPathLine() {
+      ctx.strokeStyle = 'red';
+      ctx.lineCap = 'round';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(gridOffset + (stepLength/2), gridOffset + (stepLength/2));
+      ctx.lineTo(gridOffset + stepLength + (stepLength/2), gridOffset + stepLength + (stepLength/2));
+      ctx.stroke();
+    };
+
     function convertToGridElement(xPos, yPos) {
       const x = Math.floor(xPos/stepLength);
       const y = Math.floor(yPos/stepLength);
       return { x: x, y: y };
     };
+
+    // TODO: Write actual grid conversion equation
+    function convertGridPointsToCanvasPosition(gridPoint) {
+      const x = 10;
+      const y = 10;
+      return { x: x, y: y }
+    }
 
     function togglePoint(point) {
       if(areEqualPoints(startCoord, point) || areEqualPoints(endCoord, point)) {
@@ -119,6 +159,10 @@
       const coordinate = convertToGridElement(e.offsetX - gridOffset, e.offsetY - gridOffset);
       togglePoint(coordinate);
       window.requestAnimationFrame(draw);
+    });
+
+    document.getElementById('search-button').addEventListener('click', function() {
+      drawPathLine();
     });
 
     init();
