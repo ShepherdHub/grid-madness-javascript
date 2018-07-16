@@ -8,10 +8,54 @@
   <meta name="description" content="Grid Madness">
   <meta name="author" content="Steven">
 
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
   <style>
-    .canvas-container{
+    .logo {
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: 2.1rem;
+      padding-left: 30px;
+    }
+
+    .main {
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+
+    .flex-container {
       display: flex;
-      justify-content: center;
+      flex-wrap: no-wrap;
+    }
+
+    section.canvas {
+      flex-shrink: 0;
+      flex-grow: 0;
+    }
+
+    section.options {
+      flex-grow: 1;
+      flex-shrink: 1;
+      margin-top: 5px;
+      margin-left: 15px;
+      padding: 0 50px 0 10px;
+      height: 500px;
+      box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 
+                  0 3px 1px -2px rgba(0,0,0,0.12), 
+                  0 1px 5px 0 rgba(0,0,0,0.2);
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    li {
+      margin-bottom: 1em;
+    }
+
+    li>div {
+      margin-bottom: 0.5em;
     }
   </style>
 
@@ -21,24 +65,57 @@
 </head>
 
 <body>
-  <h1>Grid Madness!</h1>
-  <p>Can our robot find the way through?</p>
-  <div class="canvas-container">
-    <canvas id="canvas-grid" width="610" height="610"></canvas>
-  </div>
-  <div>
-    <p>Find the shortest path:</p>
-    <button id="draw-button">
-      Draw
-    </button>
-    <button id="clear-button">
-      Clear
-    </button>
+  <nav>
+    <div class="nav-wrapper indigo lighten-2">
+      <a href="#" class="logo">Grid Madness!</a>
+    </div>
+  </nav>
+  <div class="main">
+    <p>Build an obstacle course and see if our Dijkstra-bot can find the shortest path.</p>
+
+    <div class="flex-container">
+    <section class="canvas">
+      <canvas id="canvas-grid" width="510" height="510"></canvas>
+    </section>
+    <section class="options indigo lighten-5">
+      <h5>Instructions:</h5>
+      <ol>
+        <li>Add obstacles by clicking squares on the grid. Clicking a square with an obstacle will remove the obstacle.</li>
+        <li>
+          <div>Choose a path finding alogrithm.</div>
+          <div class="input-field">
+            <select>
+              <option value="dijkstra">Dijkstra's</option>
+              <option value="d-star">D*</option>
+              <option value="a-star">A*</option>
+            </select>
+          </div>
+        </li>
+        <li>
+          <div>Find the shortest path!</div>
+          <div class="button-group">
+            <button id="draw-button" class="btn blue waves-effect">
+              Find Path
+            </button>
+            <button id="clear-button" class="btn red waves-effect">
+              Clear Path
+            </button>
+          </div>
+        </li>
+      </ol>
+      <!-- <p>Click on an empty square to create an obstacle.</p>
+      <p>Click on the square again to remove the obstacle.</p>
+      <p>Find the shortest path:</p>
+      <button id="draw-button" class="btn blue waves-effect">
+        Find Path
+      </button>
+      <button id="clear-button" class="btn red waves-effect">
+        Clear
+      </button> -->
+    </section>
+    </div>
   </div>
   <script>
-    // TODO: Create a more efficient system for adding/removing obstacles
-    // Try only drawing/erasing the obstacle that is being added/removed
-    
     /*************************************************************************
     *   Definitions
     * ---------------
@@ -56,7 +133,7 @@
     * used to draw on the canvas.
     *************************************************************************/
 
-    const boardLength = 600;
+    const boardLength = 500;
     const gridSize = 10;
     const spaceLength = boardLength / gridSize;
     const boardOffset = 5.5; // The board is 5 pixels off from the actual 0,0 point of the canvas
@@ -92,7 +169,7 @@
     };
 
     function clearBoard() {
-      ctx.clearRect(0, 0, 610, 610);
+      ctx.clearRect(0, 0, 510, 510);
     };
 
     function drawGridLines() {
@@ -216,8 +293,17 @@
       window.requestAnimationFrame(draw);
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('select');
+      var instances = M.FormSelect.init(elems);
+    });
+
+
     init();
 
   </script>
+
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
 </body>
 </html>
