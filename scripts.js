@@ -22,21 +22,9 @@ const boardOffset = 5.5; // The board is 5 pixels off from the actual 0,0 point 
 let canvas = document.getElementById("canvas-grid");
 let ctx = canvas.getContext("2d");
 let obstacles = [];
-const startPoint = { x: 0, y:0 };
-const endPoint = { x: 9, y:9 };
-const pathPoints = [
-  {x: 0, y: 0},
-  {x: 1, y: 0},
-  {x: 1, y: 1},
-  {x: 2, y: 2},
-  {x: 3, y: 3},
-  {x: 4, y: 4},
-  {x: 5, y: 5},
-  {x: 6, y: 6},
-  {x: 7, y: 7},
-  {x: 8, y: 8},
-  {x: 9, y: 9}
-];
+const startPoint = { x: 0, y: 0 };
+const endPoint = { x: 9, y: 9 };
+let pathPoints = [];
 
 function init() {
   window.requestAnimationFrame(draw);
@@ -155,6 +143,38 @@ function togglePoint(point) {
 
 function areEqualPoints(pointA, pointB) {
   return pointA.x === pointB.x && pointA.y === pointB.y;
+};
+
+function constructPostObject() {
+  return JSON.stringify({
+    size: gridSize,
+    start: `(${startPoint.x},${startPoint.y})`,
+    end: `(${endPoint.x},${endPoint.y})`,
+    algorithm: document.getElementById('algorithm-select').value,
+    obstacles: obstacles.map(p => `(${p.x},${p.y})`)
+  }) 
+}
+
+function getPathPoints() {
+  const data = constructPostObject()
+
+  $.ajax({
+    type: 'POST',
+    url: 'http://localhost:5000/api/find_path',
+    data: data,
+    success: function(response){
+      pathPoints = response.path.map(p => {
+        return { x: p[0], y: p[1] }
+      });
+      window.requestAnimationFrame(drawPathLine);
+    },
+    dataType: 'json',
+    contentType: 'application/json'
+  })
+};
+
+function updatePathPoints(response) {
+  pathPoints
 }
 
 // Event Listeners
@@ -168,17 +188,19 @@ canvas.addEventListener('click', function(e) {
 
 document.getElementById('draw-button').addEventListener('click', function() {
   window.requestAnimationFrame(draw);
-  window.requestAnimationFrame(drawPathLine);
+  getPathPoints();
+  // window.requestAnimationFrame(drawPathLine);
 });
 
 document.getElementById('clear-button').addEventListener('click', function() {
   window.requestAnimationFrame(draw);
 });
 
+// Materialize code to initialize select elements
 document.addEventListener('DOMContentLoaded', function() {
   var elems = document.querySelectorAll('select');
   var instances = M.FormSelect.init(elems);
 });
 
-
+// Draw grid on start
 init();
